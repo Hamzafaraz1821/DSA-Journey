@@ -38,7 +38,7 @@ void effApproach(){
         // here we have done a good use of bit manipulation using the right shift, left shift, negation and (and) operator
 
         // let we have n=5; binary is = 101
-        // when we negate a number we get  29(1s)010
+        // when we negate a 5 we get  29(1s)010
         // we need a mask which contains 29(0s)111; 3 ones because we have 3 bits in 5;
 
         // when we & both the numbers we 1&0=0; 1&1=1;
