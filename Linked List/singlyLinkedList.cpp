@@ -58,7 +58,21 @@ void linkedList::addAtTail(int val){
 }
 
 void linkedList::deleteNode(int val){
-    
+     node* temp = headPtr;
+
+     while(temp != nullptr && temp->data!=val){
+         temp = temp->next;
+     }
+
+     if(temp == nullptr){
+         cout << endl << "Node not found";
+     }else{
+             temp->data = temp->next->data;
+             temp->next = temp->next->next;
+
+     }
+     delete temp;
+
 }
 
 void linkedList::displayAll() {
@@ -68,6 +82,9 @@ void linkedList::displayAll() {
         temp = temp->next;
     }
 }
+
+
+
 
 linkedList::~linkedList() {
     node* temp = headPtr;
@@ -91,6 +108,10 @@ int main(){
     list1.addAtTail(5);
     list1.addAtHead(4);
     list1.addAtTail(3);
+
+    list1.displayAll();
+
+    list1.deleteNode(8);
 
     list1.displayAll();
 
