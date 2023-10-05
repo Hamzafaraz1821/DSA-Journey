@@ -83,30 +83,41 @@ void charStack::displayAll() {
 bool isBalanced(const string& parenthesis){
 
     charStack list1;
-    int count=0;
+    int count=0 , openCount=0 , closeCount=0;
     for(char i:parenthesis){
         list1.push(i);
         ++count;
     }
+
+    list1.displayAll();
+
 
     // if count is not even it means that there is a closing or opening bracket missing from the pair
     if(count%2!=0){
         return false;
     }else{
         int i=0;
+        char bracket = parenthesis[count-1];
         for(; i<(count/2);i++){
-            if(list1.pop() != ')'){
-                return false;
+            if( list1.pop() != bracket){
+                break;
             }
+            ++openCount;
         }
         for(;i<count; i++){
-            if(list1.pop() != '('){
-                return false;
+            if(list1.pop() == bracket){
+                break;
             }
+             ++closeCount;
         }
     }
+    cout << openCount << " " << closeCount;
+    if(openCount == closeCount){
+        return true;
+    }else{
+        return false;
+    }
 
-    return true;
 
 }
 
@@ -126,7 +137,7 @@ charStack::~charStack() {
 int main(){
 
 
-    string parenthesis = "((((()))))";
+    string parenthesis = "()()";
     bool val = isBalanced(parenthesis);
 
     if(val){
@@ -134,6 +145,9 @@ int main(){
     }else{
         cout <<endl<< "Not Balanced";
     }
+
+    charStack list1;
+    list1.displayAll();
 
 
     return 0;
