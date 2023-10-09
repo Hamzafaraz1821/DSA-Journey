@@ -7,6 +7,7 @@
 //============================================================================
 
 #include <iostream>
+#include <utility>
 #include <variant>
 #include <string>
 #include <cmath>
@@ -16,7 +17,7 @@ using namespace std;
 class stack {
 private:
     struct node {
-        variant<double, char> data;
+        variant<double,string,char> data;
         node* next;
         node* prev;
 
@@ -46,16 +47,19 @@ public:
     bool isEmpty();
 
     // Push a value onto the stack
-    void push(variant<double, char>);
+    void push(variant<double,string, char>);
 
     // Pop and return the top value from the stack
-    variant<double, char> pop();
+    variant<double,string, char> pop();
 
     // Pop and return the value from the tail of the stack
-    variant<double, char> popFromTail();
+    variant<double,string, char> popFromTail();
 
     // Display all elements in the stack
     void displayAll();
+
+    // clear the stack
+    void clear();
 
     // Deallocate the memory
     ~stack();
@@ -70,7 +74,7 @@ bool stack::isEmpty() {
 }
 
 // Push a value onto the stack
-void stack::push(variant<double, char> val) {
+void stack::push(variant<double,string, char> val) {
     // Create a new node
     node* newNode = new node;
 
@@ -81,7 +85,7 @@ void stack::push(variant<double, char> val) {
     }
 
     // Assign the value to the new node and adjust pointers
-    newNode->data = val;
+    newNode->data = std::move(val);
     newNode->next = headPtr;
     newNode->prev = tailPtr;
 
@@ -92,14 +96,14 @@ void stack::push(variant<double, char> val) {
 }
 
 // Pop and return the top value from the stack
-variant<double, char> stack::pop() {
+variant<double,string, char> stack::pop() {
     node* temp = headPtr;
 
     if (headPtr == nullptr) {
         cout << endl << "UnderFlow";
     }
 
-    variant<double, char> data = temp->data;
+    variant<double,string, char> data = temp->data;
 
     // If there's only one element, set both headPtr and tailPtr to nullptr
     if (headPtr == tailPtr) {
@@ -117,14 +121,14 @@ variant<double, char> stack::pop() {
 }
 
 // Pop and return the value from the tail of the stack
-variant<double, char> stack::popFromTail() {
+variant<double,string, char> stack::popFromTail() {
     node* temp = tailPtr;
 
     if (headPtr == nullptr) {
         cout << endl << "UnderFlow";
     }
 
-    variant<double, char> data = temp->data;
+    variant<double,string, char> data = temp->data;
 
     // If there's only one element, set both headPtr and tailPtr to nullptr
     if (headPtr == tailPtr) {
@@ -160,6 +164,13 @@ void stack::displayAll() {
     } while (current != tailPtr);
 }
 
+void stack::clear(){
+    while (!isEmpty()) {
+        pop();
+    }
+}
+
+
 // Destructor for the stack class
 stack::~stack() {
     while (!isEmpty()) {
@@ -177,7 +188,7 @@ public:
     double calculate();
 
     // Display the postfix expression
-    void displayInfixToPostfix();
+    void displayInfixToPostfix(bool);
 private:
     string postfix;
     stack stack1;
@@ -233,9 +244,12 @@ void infixToPostfixConvertor::infixToPostfix(string expression) {
                 number = "";
                 stack1.push(value);
             }
-            catch (const std::invalid_argument& e) {}
+            catch (const std::invalid_argument& e) {
+                stack1.push(number);
+                number = "";
+            }
 
-            variant<double, char> value1 = getHeadPtr()->data;
+            variant<double,string, char> value1 = getHeadPtr()->data;
 
             // Keep pushing operators onto stack1 until their precedence is lower
             while (checkPrecedence(get<char>(value1), i)) {
@@ -255,9 +269,12 @@ void infixToPostfixConvertor::infixToPostfix(string expression) {
                     number = "";
                     stack1.push(num);
                 }
-                catch (const std::invalid_argument& e) {}
+                catch (const std::invalid_argument& e) {
+                    stack1.push(number);
+                    number = "";
+                }
 
-                variant<double, char> value1 = getHeadPtr()->data;
+                variant<double,string, char> value1 = getHeadPtr()->data;
 
                 // Pop and push operators until an opening parenthesis is encountered
                 while (get<char>(value1) != '(') {
@@ -269,20 +286,21 @@ void infixToPostfixConvertor::infixToPostfix(string expression) {
                 pop();
             }
         }
+
     }
 }
 
 // Evaluate the postfix expression
 double infixToPostfixConvertor::calculate() {
-    variant<double, char> i = stack1.popFromTail();
+    variant<double,string, char> i = stack1.popFromTail();
 
     do {
         if (holds_alternative<double>(i)) {
             push(get<double>(i));
         }
         else if (holds_alternative<char>(i)) {
-            variant<double, char> value2 = pop();
-            variant<double, char> value1 = pop();
+            variant<double,string, char> value2 = pop();
+            variant<double,string, char> value1 = pop();
 
             double afterOperation = applyOperation(get<double>(value1), get<double>(value2), get<char>(i));
 
@@ -300,13 +318,16 @@ double infixToPostfixConvertor::calculate() {
 
     } while (stack1.isEmpty() || holds_alternative<char>(i) || holds_alternative<double>(i));
 
-    variant<double, char> result = pop();
+    variant<double,string, char> result = pop();
     return get<double>(result);
 }
 
 // Display the postfix expression
-void infixToPostfixConvertor::displayInfixToPostfix() {
+void infixToPostfixConvertor::displayInfixToPostfix(bool flag) {
     stack1.displayAll();
+    if(flag){
+        stack1.clear();
+    }
 }
 
 // Check if a character is an operand (not an operator or parenthesis)
@@ -400,39 +421,79 @@ int main() {
     bool exit = false;
     string expression;
     double value;
+    bool flag = false;
 
     while (!exit) {
-        cout << "Options:" << endl;
-        cout << "1. Convert and Evaluate an Infix Expression" << endl;
-        cout << "2. Exit" << endl;
+        cout <<endl<< "Options:" << endl;
+        cout << "1. Convert to Postfix" << endl;
+        cout << "2. Convert to Postfix and Evaluate an Infix Expression" << endl;
+        cout << "3. Exit" << endl;
         cout << "Enter your choice: ";
 
         int choice;
-        cin >> choice;
+        while(!(cin >> choice)){
+            cout << endl << "Warning!! Only integer for Choice" << endl;
+            cout <<endl<< "Options:" << endl;
+            cout << "1. Convert to Postfix" << endl;
+            cout << "2. Convert to Postfix and Evaluate an Infix Expression" << endl;
+            cout << "3. Exit" << endl;
+            cout << "Enter your choice: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        cin.ignore(); // Consume the newline character
 
         switch (choice) {
-             case 1:
-                cout << "Enter an infix expression: ";
+            case 1:
+                cout <<endl<< "Enter an infix expression: ";
 
-                cin.ignore(); // Consume the newline character
                 getline(cin, expression);
 
                 // Convert the infix expression to postfix
                 infixToPostfix.infixToPostfix(expression);
 
                 // Display the postfix expression
-                cout << "Postfix Expression: ";
-                infixToPostfix.displayInfixToPostfix();
+                cout <<endl<< "Postfix Expression: ";
+                infixToPostfix.displayInfixToPostfix(true);
+                break;
+
+            case 2:
+
+                while(!flag) {
+                    flag = true;
+                    cout << endl << "Enter an infix expression: ";
+
+                    getline(cin, expression);
+
+
+                    for (char c: expression) {
+                        if (isalpha(c)) {
+                            cout << endl << "Warning!! Your expression contains alphabets "<<endl;
+                            flag = false;
+                            break;
+                        }
+                    }
+                }
+                flag = false;
+                cout << expression;
+
+
+                // Convert the infix expression to postfix
+                infixToPostfix.infixToPostfix(expression);
+
+                // Display the postfix expression
+                cout <<endl<< "Postfix Expression: ";
+                infixToPostfix.displayInfixToPostfix(false);
 
                 // Calculate and display the result
                 value = infixToPostfix.calculate();
                 cout << endl << "Result: " << value << endl;
                 break;
-             case 2:
+            case 3:
                 exit = true;
                 break;
-             default:
-                cout << "Invalid choice. Please try again." << endl;
+            default:
+                cout <<endl<< "Invalid choice. Please try again." << endl;
         }
     }
 
