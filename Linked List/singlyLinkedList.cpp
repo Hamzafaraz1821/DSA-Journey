@@ -22,6 +22,11 @@ public:
     void addAtTail(int);
     void deleteNode(int);
     void displayAll();
+    node* reverse(node*);
+
+    void reverseList(){
+        headPtr = reverse(headPtr);
+    }
 //    void swap(node* headPtr1,node* prev);
     node * swap(node* headPtr1);
     int noOfNodes(node* headPtr1){
@@ -70,6 +75,24 @@ public:
 //    swap(third,prev);
 //
 //}
+
+
+linkedList::node* linkedList::reverse(node* head) {
+    node* prev = nullptr;
+    node* current = head;
+    node* next = nullptr;
+
+    while (current != nullptr) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    head = prev;
+    return head;
+}
+
 
 linkedList::node* linkedList::swap(node* head){
     if(head == nullptr || head->next == nullptr){
@@ -217,15 +240,15 @@ int main(){
     list1.addAtTail(5);
     list1.addAtTail(6);
 
+    list1.reverseList();
 
 
-
-    list2.addAtHead(5);
-    list2.addAtHead(1);
-
-     list1.PrintLots(list1.getHead(),list2.getHead());
-//    list1.swap(list1.getHead(), nullptr);
-     list1.swap(list1.getHead());
+//    list2.addAtHead(5);
+//    list2.addAtHead(1);
+//
+//     list1.PrintLots(list1.getHead(),list2.getHead());
+////    list1.swap(list1.getHead(), nullptr);
+//     list1.swap(list1.getHead());
      list1.displayAll();
 
 

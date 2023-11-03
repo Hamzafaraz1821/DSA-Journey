@@ -31,6 +31,9 @@ private:
     Node* DoubleRotationWithLeft(Node* K1);
     Node* insertNode(int,Node*);
     void printNode(Node*,int,string);
+    void destroyNode(Node* node);
+
+
 
 public:
     avlTree(){
@@ -38,6 +41,9 @@ public:
     }
     void insert(int);
     void displayAll();
+    ~avlTree(){
+        destroyNode(root);
+    }
 
 };
 
@@ -45,37 +51,37 @@ void avlTree::insert(int X){
     root = insertNode(X , root);
 }
 
-avlTree::Node* avlTree::insertNode(int X, Node* root){
-    if(root == nullptr){
-        root = new Node;
-        root->data = X;
-        root->height = 0;
-        root->left = root->right = nullptr;
+avlTree::Node* avlTree::insertNode(int X, Node* rootNode){
+    if(rootNode == nullptr){
+        rootNode = new Node;
+        rootNode->data = X;
+        rootNode->height = 0;
+        rootNode->left = rootNode->right = nullptr;
     }else{
-        if(X > root->data){
-            root->right = insertNode(X,root->right);
-            if(height(root->right)- height(root->left) == 2){
-                if(X> root->right->data){
-                    root = SingleRotationWithRight(root);
+        if(X > rootNode->data){
+            rootNode->right = insertNode(X,rootNode->right);
+            if(height(rootNode->right)- height(rootNode->left) == 2){
+                if(X> rootNode->right->data){
+                    rootNode = SingleRotationWithRight(rootNode);
                 }else{
-                    root = DoubleRotationWithRight(root);
+                    rootNode = DoubleRotationWithRight(rootNode);
                 }
             }
-        }else if(X < root->data){
-            root->left = insertNode(X,root->left);
-            if(height(root->left)- height(root->right) == 2){
-                if(X < root->left->data){
-                    root = SingleRotationWithLeft(root);
+        }else if(X < rootNode->data){
+            rootNode->left = insertNode(X,rootNode->left);
+            if(height(rootNode->left)- height(rootNode->right) == 2){
+                if(X < rootNode->left->data){
+                    rootNode = SingleRotationWithLeft(rootNode);
                 }else{
-                    root = DoubleRotationWithLeft(root);
+                    rootNode = DoubleRotationWithLeft(rootNode);
                 }
             }
 
         }
     }
 
-    root->height = max(height(root->left), height(root->right))+1;
-    return root;
+    rootNode->height = max(height(rootNode->left), height(rootNode->right))+1;
+    return rootNode;
 }
 
 avlTree::Node* avlTree::SingleRotationWithRight(Node *K1) {
@@ -101,7 +107,9 @@ avlTree::Node* avlTree::SingleRotationWithLeft(Node *K1) {
 }
 
 avlTree::Node* avlTree::DoubleRotationWithRight(avlTree::Node *K1) {
+    // Rotate K3 and K2;
     K1->right = SingleRotationWithLeft(K1->right);
+    // Rotate K1 and K2
     return SingleRotationWithRight(K1);
 }
 
@@ -124,6 +132,15 @@ void avlTree::printNode(avlTree::Node * root, int indent, string dir = "") {
 
 void avlTree::displayAll(){
     printNode(root,0,"");
+}
+
+
+void avlTree::destroyNode(Node* node){
+    if(node != nullptr){
+        destroyNode(node->left);
+        destroyNode(node->right);
+        delete node;
+    }
 }
 
 

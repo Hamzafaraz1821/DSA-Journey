@@ -103,11 +103,8 @@ public:
 };
 
 bool balancingSymbols::isBracketBalanced(string brackets){
-    if(brackets.empty()){
-        if(isEmpty()){
-            return true;
-        }
-        return false;
+    if(brackets.empty() && isEmpty()){
+        return true;
     }
 
     if(isBracket(brackets[0])){
@@ -115,14 +112,14 @@ bool balancingSymbols::isBracketBalanced(string brackets){
     }else{
         if(isEmpty()){
             return false;
-        }else{
+        }
             char poppedChar = pop();
             if((poppedChar == '(' && brackets[0] != ')') ||
                (poppedChar == '{' && brackets[0] != '}') ||
                (poppedChar == '[' && brackets[0] != ']')){
                 return false;
             }
-        }
+
     }
     return isBracketBalanced(brackets.substr(1));
 }
@@ -132,7 +129,7 @@ int main(){
 
     balancingSymbols brackets;
 
-    bool isBalanced = brackets.isBracketBalanced("[()]");
+    bool isBalanced = brackets.isBracketBalanced("[()]}");
     if(isBalanced){
         cout <<endl<< "The brackets are Consistent";
     }else{
