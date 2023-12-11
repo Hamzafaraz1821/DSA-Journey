@@ -1,0 +1,37 @@
+Hello, how are you?
+What is your name?
+Nice to meet you.
+What can I do for you today?
+Please wait a moment.
+Thank you for your patience.
+I'm sorry, I don't understand.
+Can you please repeat that?
+Let me try that again.
+Is there anything else I can help you with?
+Goodbye.
+What is the weather like today?
+What time is it?
+Where am I?
+How do I get to the nearest [place]?
+Can you show me a map?
+Can you search the internet for [query]?
+What is the definition of [word]?
+What is the meaning of life?
+Can you tell me a story?
+Can you play a song?
+I am a large language model.
+I am trained on a massive dataset of text and code.
+I can generate text, translate languages, write different kinds of creative content, and answer your questions in an informative way.
+I am still under development, but I have learned to perform many kinds of tasks.
+I am always learning and improving.
+I am excited to see what the future holds.
+I love you.
+I hate you.
+I'm happy.
+I'm sad.
+I'm angry.
+I'm scared.
+I'm confused.
+I'm tired.
+I'm hungry.
+I'm thirsty.

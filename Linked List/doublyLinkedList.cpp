@@ -21,6 +21,7 @@ public:
     }
     void addNodeAtHead(int);
     Node* swap(Node* );
+    Node* reverseDLL(Node* );
     void displayAll();
 };
 
@@ -43,6 +44,23 @@ doublyLinked::Node* doublyLinked::swap(Node* head){
     first->next = swap(third);
 
     return second;
+}
+
+doublyLinked::Node* doublyLinked::reverseDLL(doublyLinked::Node * head)
+{
+    // Write your code here
+    Node* temp = nullptr;
+    while(head->next){
+        temp = head->prev;
+        head->prev = head->next;
+        head->next = temp;
+        head = head->next;
+    }
+    head->next = head->prev;
+    head->prev = nullptr;
+
+    headPtr = head;
+    return head;
 }
 
 void doublyLinked::addNodeAtHead(int value) {
@@ -83,7 +101,8 @@ int main(){
     doubl.addNodeAtHead(2);
     doubl.addNodeAtHead(1);
 
-    doubl.swap(doubl.getHead());
+//    doubl.swap(doubl.getHead());
+    doubl.reverseDLL(doubl.getHead());
 
     doubl.displayAll();
     return 0;

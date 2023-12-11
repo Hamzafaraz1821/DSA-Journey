@@ -32,6 +32,16 @@ private:
     Node* insertNode(int,Node*);
     void printNode(Node*,int,string);
     void destroyNode(Node* node);
+    Node* deleteNodeAt(int,Node*);
+    Node* findMin(Node* rootNode){
+    // Base case: the tree is empty or the node has no left child
+    if(rootNode == nullptr || rootNode->left == nullptr){
+        return rootNode;
+    }
+    // Recursively find the leftmost node in the left subtree
+    return findMin(rootNode->left);
+}
+
 
 
 
@@ -39,6 +49,7 @@ public:
     avlTree(){
         root = nullptr;
     }
+    void deleteNode(int);
     void insert(int);
     void displayAll();
     ~avlTree(){
@@ -84,6 +95,80 @@ avlTree::Node* avlTree::insertNode(int X, Node* rootNode){
     return rootNode;
 }
 
+avlTree::Node* avlTree::deleteNodeAt(int X,Node* rootNode){
+    
+    // Base case: the node to be deleted is not found or the tree is empty
+    if(rootNode == nullptr){
+        return rootNode;
+    }
+    // If the node to be deleted is smaller than the root node, then it lies in the left subtree
+    if(X < rootNode->data){
+        rootNode->left = deleteNodeAt(X, rootNode->left);
+    }
+    // If the node to be deleted is larger than the root node, then it lies in the right subtree
+    else if(X > rootNode->data){
+        rootNode->right = deleteNodeAt(X, rootNode->right);
+    }
+    // If the node to be deleted is equal to the root node, then this is the node to delete
+    else{
+        // Case 1: the node has no child or only one child
+        if(rootNode->left == nullptr || rootNode->right == nullptr){
+            Node* temp = rootNode->left ? rootNode->left : rootNode->right;
+            // If the node has no child, then temp is nullptr
+            if(temp == nullptr){
+                temp = rootNode;
+                rootNode = nullptr;
+            }
+            // If the node has one child, then copy the child's data to the node and delete the child
+            else{
+                *rootNode = *temp;
+            }
+            delete temp;
+        }
+        // Case 2: the node has two children
+        else{
+            // Find the inorder successor (smallest node in the right subtree)
+            Node* temp = findMin(rootNode->right);
+            // Copy the inorder successor's data to the node
+            rootNode->data = temp->data;
+            // Delete the inorder successor from the right subtree
+            rootNode->right = deleteNodeAt(temp->data, rootNode->right);
+        }
+    }
+    // If the tree had only one node, then return
+    if(rootNode == nullptr){
+        return rootNode;
+    }
+    // Update the height of the current node
+    rootNode->height = max(height(rootNode->left), height(rootNode->right)) + 1;
+    // Get the balance factor of the current node
+    int balance = height(rootNode->left) - height(rootNode->right);
+    // If the node is unbalanced, then perform rotations
+    // Left-left case
+    if(balance > 1 && height(rootNode->left->left) - height(rootNode->left->right) >= 0){
+        return SingleRotationWithLeft(rootNode);
+    }
+    // Left-right case
+    if(balance > 1 && height(rootNode->left->left) - height(rootNode->left->right) < 0){
+        return DoubleRotationWithLeft(rootNode);
+    }
+    // Right-right case
+    if(balance < -1 && height(rootNode->right->left) - height(rootNode->right->right) <= 0){
+        return SingleRotationWithRight(rootNode);
+    }
+    // Right-left case
+    if(balance < -1 && height(rootNode->right->left) - height(rootNode->right->right) > 0){
+        return DoubleRotationWithRight(rootNode);
+    }
+    // Return the updated node
+    return rootNode;
+}
+
+
+void avlTree::deleteNode(int val){
+   root =  deleteNodeAt(val,root);
+}
+
 avlTree::Node* avlTree::SingleRotationWithRight(Node *K1) {
     Node* K2;
 
@@ -125,7 +210,7 @@ void avlTree::printNode(avlTree::Node * root, int indent, string dir = "") {
 
     printNode(root->right,indent+8,"Right");
 
-    cout << setw(indent) << "---|" << dir << root->data << endl;
+    cout << setw(indent) << "---|" << dir << "(" << root->data << ")" << endl << endl;
 
     printNode(root->left,indent+8,"Left");
 }
@@ -147,11 +232,14 @@ void avlTree::destroyNode(Node* node){
 int main(){
     avlTree avl;
     int val;
+
     cout << endl << "Enter your Numbers: ";
     for(int i=0;i<10;i++){
         cin >> val;
         avl.insert(val);
     }
+
+    
 
     avl.displayAll();
 
